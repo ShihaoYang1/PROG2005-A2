@@ -13,36 +13,35 @@
     </header>
 
     <main class="container">
-        <!-- Message display area -->
+        <!-- Message Display Area -->
         <div id="message-area"></div>
 
+        <!-- Tab Navigation -->
         <div class="tabs">
-            <button class="tab-btn active" onclick="showSection('add-section')">Add Item</button>
-            <button class="tab-btn" onclick="showSection('manage-section')">Manage Items</button>
-            <button class="tab-btn" onclick="showSection('search-section')">Search</button>
-            <button class="tab-btn" onclick="showSection('view-section')">View All</button>
+            <button class="tab-btn active" onclick="switchTab('add')">Add Item</button>
+            <button class="tab-btn" onclick="switchTab('manage')">Manage Items</button>
+            <button class="tab-btn" onclick="switchTab('search')">Search</button>
+            <button class="tab-btn" onclick="switchTab('view')">View All</button>
         </div>
 
-        <!-- Add Item -->
-        <section id="add-section" class="tab-content active">
+        <!-- Tab 1: Add Item -->
+        <section id="tab-add" class="tab-content active">
             <h2>➕ Add New Item</h2>
-            <form id="add-form">
-                <div class="form-row">
+            <!-- 关键：onsubmit返回false防止页面刷新 -->
+            <form id="add-form" onsubmit="return handleAddItem(event)">
+                <div class="form-grid">
                     <div class="form-group">
-                        <label for="item-id">Item ID *</label>
-                        <input type="text" id="item-id" required placeholder="Unique identifier">
+                        <label>Item ID *</label>
+                        <input type="text" id="item-id" required placeholder="e.g., ITEM001">
                     </div>
                     <div class="form-group">
-                        <label for="item-name">Item Name *</label>
-                        <input type="text" id="item-name" required placeholder="Item name">
+                        <label>Item Name *</label>
+                        <input type="text" id="item-name" required placeholder="Enter item name">
                     </div>
-                </div>
-
-                <div class="form-row">
                     <div class="form-group">
-                        <label for="category">Category *</label>
+                        <label>Category *</label>
                         <select id="category" required>
-                            <option value="">Select category</option>
+                            <option value="">Select Category</option>
                             <option value="Electronics">Electronics</option>
                             <option value="Furniture">Furniture</option>
                             <option value="Clothing">Clothing</option>
@@ -51,94 +50,99 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="supplier">Supplier *</label>
-                        <input type="text" id="supplier" required placeholder="Supplier name">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="quantity">Quantity *</label>
+                        <label>Quantity *</label>
                         <input type="number" id="quantity" required min="0" placeholder="0">
                     </div>
                     <div class="form-group">
-                        <label for="price">Price *</label>
+                        <label>Price ($) *</label>
                         <input type="number" id="price" required min="0" step="0.01" placeholder="0.00">
                     </div>
+                    <div class="form-group">
+                        <label>Supplier Name *</label>
+                        <input type="text" id="supplier" required placeholder="Enter supplier">
+                    </div>
                 </div>
-
                 <div class="form-group checkbox-group">
                     <label>
                         <input type="checkbox" id="is-popular">
                         <span>Mark as Popular Item</span>
                     </label>
                 </div>
-
                 <div class="form-group">
-                    <label for="comment">Comment (Optional)</label>
-                    <textarea id="comment" rows="2" placeholder="Add a comment..."></textarea>
+                    <label>Comment (Optional)</label>
+                    <textarea id="comment" rows="2" placeholder="Add any comments..."></textarea>
                 </div>
-
                 <button type="submit" class="btn-primary">Add Item</button>
             </form>
         </section>
 
-        <!-- Manage Items (Update/Delete) -->
-        <section id="manage-section" class="tab-content">
-            <h2>📝 Update Item</h2>
-            <div class="form-group">
-                <label>Item Name to Update *</label>
-                <input type="text" id="update-name" placeholder="Enter current name">
+        <!-- Tab 2: Manage Items -->
+        <section id="tab-manage" class="tab-content">
+            <div class="manage-section">
+                <h2>📝 Update Item</h2>
+                <form id="update-form" onsubmit="return handleUpdateItem(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Current Item Name *</label>
+                            <input type="text" id="update-current-name" required placeholder="Enter current name">
+                        </div>
+                    </div>
+                    <p class="section-hint">Leave fields blank to keep current values</p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>New Name</label>
+                            <input type="text" id="update-new-name" placeholder="New name (optional)">
+                        </div>
+                        <div class="form-group">
+                            <label>New Quantity</label>
+                            <input type="number" id="update-quantity" min="0" placeholder="New quantity (optional)">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>New Price ($)</label>
+                            <input type="number" id="update-price" min="0" step="0.01" placeholder="New price (optional)">
+                        </div>
+                        <div class="form-group">
+                            <label>New Supplier</label>
+                            <input type="text" id="update-supplier" placeholder="New supplier (optional)">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-warning">Update Item</button>
+                </form>
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>New Name</label>
-                    <input type="text" id="update-new-name" placeholder="Leave blank to keep unchanged">
-                </div>
-                <div class="form-group">
-                    <label>New Quantity</label>
-                    <input type="number" id="update-quantity" min="0" placeholder="Leave blank to keep unchanged">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>New Price</label>
-                    <input type="number" id="update-price" min="0" step="0.01" placeholder="Leave blank to keep unchanged">
-                </div>
-                <div class="form-group">
-                    <label>New Supplier</label>
-                    <input type="text" id="update-supplier" placeholder="Leave blank to keep unchanged">
-                </div>
-            </div>
-            <button id="update-btn" class="btn-warning">Update Item</button>
 
-            <hr>
-
-            <h2>🗑️ Delete Item</h2>
-            <div class="form-group">
-                <label>Item Name to Delete *</label>
-                <input type="text" id="delete-name" placeholder="Enter item name">
-                <small class="hint">⚠️ Confirmation will be required before deletion</small>
+            <div class="manage-section">
+                <h2>🗑️ Delete Item</h2>
+                <form id="delete-form" onsubmit="return handleDeleteItem(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Item Name to Delete *</label>
+                            <input type="text" id="delete-name" required placeholder="Enter item name to delete">
+                        </div>
+                    </div>
+                    <p class="hint">⚠️ You will be asked to confirm before deletion</p>
+                    <button type="submit" class="btn-danger">Delete Item</button>
+                </form>
             </div>
-            <button id="delete-btn" class="btn-danger">Delete Item</button>
         </section>
 
-        <!-- Search -->
-        <section id="search-section" class="tab-content">
-            <h2>🔍 Search Items</h2>
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="Enter keyword...">
-                <button id="search-btn" class="btn-primary">Search</button>
-            </div>
+        <!-- Tab 3: Search -->
+        <section id="tab-search" class="tab-content">
+            <h2>🔍 Search Inventory</h2>
+            <form id="search-form" class="search-form" onsubmit="return handleSearch(event)">
+                <input type="text" id="search-input" placeholder="Enter keyword to search..." required>
+                <button type="submit" class="btn-primary">Search</button>
+            </form>
             <div id="search-results"></div>
         </section>
 
-        <!-- View All -->
-        <section id="view-section" class="tab-content">
+        <!-- Tab 4: View All -->
+        <section id="tab-view" class="tab-content">
             <h2>📋 Inventory Overview</h2>
-            <div class="action-bar">
-                <button id="all-btn" class="btn-secondary">Show All</button>
-                <button id="popular-btn" class="btn-secondary">Show Popular Only</button>
+            <div class="filter-bar">
+                <button id="show-all-btn" class="btn-filter active" onclick="displayAllItems()">Show All Items</button>
+                <button id="show-popular-btn" class="btn-filter" onclick="displayPopularItems()">Show Popular Only</button>
             </div>
             <div id="items-container"></div>
         </section>
@@ -148,18 +152,7 @@
         <p>PROG2005 Programming Mobile Systems | Assessment 2 Part 1</p>
     </footer>
 
-    <script type="module" src="dist/app.js"></script>
-    <script>
-        // Simple tab switching function
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            
-            // Show selected section
-            document.getElementById(sectionId).classList.add('active');
-            event.target.classList.add('active');
-        }
-    </script>
+    <!-- 普通JS文件，不使用type="module" -->
+    <script src="dist/app.js"></script>
 </body>
 </html>
